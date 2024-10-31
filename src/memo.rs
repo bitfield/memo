@@ -1,7 +1,6 @@
 use std::fmt::Display;
 
 use serde::{Deserialize, Serialize};
-use thiserror::Error;
 
 use crate::DiskVec;
 
@@ -37,14 +36,6 @@ impl Memos {
     pub fn purge_done(&mut self) {
         self.inner.retain(|m| m.status != Status::Done);
     }
-}
-
-#[derive(Error, Debug)]
-pub enum Error {
-    #[error("no match")]
-    NoMatch,
-    #[error("not unique")]
-    NotUnique(String),
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
