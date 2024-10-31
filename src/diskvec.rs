@@ -1,7 +1,11 @@
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
 
 use std::{
-    fmt::Display, fs::{self, File}, io::{self, BufReader, BufWriter}, ops::{Deref, DerefMut}, path::{Path, PathBuf}
+    fmt::Display,
+    fs::{self, File},
+    io::{self, BufReader, BufWriter},
+    ops::{Deref, DerefMut},
+    path::{Path, PathBuf},
 };
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -69,7 +73,9 @@ impl<T> DerefMut for DiskVec<T> {
 }
 
 impl<T> Display for DiskVec<T>
-where T: Display {
+where
+    T: Display,
+{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         for elem in self.iter() {
             writeln!(f, "{elem}")?;

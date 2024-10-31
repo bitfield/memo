@@ -33,7 +33,7 @@ impl Memos {
             .filter(|m| m.text.contains(text))
             .collect()
     }
-    
+
     pub fn purge_done(&mut self) {
         self.inner.retain(|m| m.status != Status::Done);
     }
