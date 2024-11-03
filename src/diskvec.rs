@@ -18,7 +18,7 @@ impl<T> DiskVec<T>
 where
     T: DeserializeOwned + Serialize,
 {
-    /// Open (or create) the `DiskMap` stored in `path`.
+    /// Open (or create) the `DiskVec` stored in `path`.
     ///
     /// # Errors
     ///
@@ -36,7 +36,7 @@ where
         Ok(memos)
     }
 
-    /// Save the `DiskMap` contents to a file at `path`.
+    /// Save the `DiskVec` contents to a file at `path`.
     ///
     /// # Errors
     ///
