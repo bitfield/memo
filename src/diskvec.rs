@@ -52,7 +52,7 @@ where
 impl<T> Default for DiskVec<T> {
     fn default() -> Self {
         Self {
-            path: PathBuf::from("memos.txt"),
+            path: PathBuf::from("memos.json"),
             inner: Vec::new(),
         }
     }
@@ -81,5 +81,32 @@ where
             writeln!(f, "{elem}")?;
         }
         Ok(())
+    }
+}
+
+impl<T> From<Vec<T>> for DiskVec<T> {
+    fn from(value: Vec<T>) -> Self {
+        Self {
+            inner: value,
+            ..Default::default()
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use tempfile::TempDir;
+
+    use super::*;
+
+    #[test]
+    fn open_and_sync_persist_data_via_file() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("test.json");
+        let mut vec: DiskVec<String> = DiskVec::open(&path).unwrap();
+        vec.extend_from_slice(&["foo".into(), "bar".into(), "baz".into()]);
+        vec.sync().unwrap();
+        let vec2: DiskVec<String> = DiskVec::open(&path).unwrap();
+        assert_eq!(*vec, *vec2);
     }
 }

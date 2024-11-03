@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::DiskVec;
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Memo {
     pub text: String,
     pub status: Status,
@@ -54,5 +54,30 @@ impl Display for Status {
                 Self::Done => "x",
             }
         )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use tempfile::TempDir;
+
+    use super::*;
+
+    #[test]
+    fn add_fn_adds_memo_to_memos_with_pending_status() {
+        let tmp = TempDir::new().unwrap();
+        let path = tmp.path().join("test.json");
+        let mut memos = Memos::open(&path).unwrap();
+        assert!(memos.is_empty(), "unexpected data");
+        memos.add("buy milk");
+        assert_eq!(memos.len(), 1, "wrong number of memos");
+        let memo = memos.first().expect("no memos");
+        assert_eq!(
+            memo,
+            &Memo {
+                text: String::from("buy milk"),
+                status: Status::Pending
+            }
+        );
     }
 }

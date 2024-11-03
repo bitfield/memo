@@ -1,10 +1,16 @@
+use anyhow::Context;
 use clap::Parser;
+
+use std::path::PathBuf;
 
 use memo::{Memos, Status};
 
 #[derive(Parser)]
 /// Store and manage simple reminders.
 struct Args {
+    /// Path to memo file
+    #[arg(short, long, default_value = "memos.json")]
+    file: PathBuf,
     /// Mark all matching memos as done
     #[arg(short, long)]
     done: bool,
@@ -17,7 +23,7 @@ struct Args {
 
 fn main() -> anyhow::Result<()> {
     let args = Args::parse();
-    let mut memos = Memos::open("memos.txt")?;
+    let mut memos = Memos::open(&args.file).with_context(|| format!("reading {:?}", args.file))?;
     let text = args.words.join(" ");
     if args.purge {
         memos.purge_done();
@@ -33,6 +39,8 @@ fn main() -> anyhow::Result<()> {
         memos.add(&text);
         println!("Added \"{}\" as a new memo.", &text);
     }
-    memos.sync()?;
+    memos
+        .sync()
+        .with_context(|| format!("writing {:?}", args.file))?;
     Ok(())
 }
